@@ -1,6 +1,3 @@
-# ssh dkobak@172.25.250.112 -p 60222
-# ssh 172.29.0.60-63
-
 import numpy as np
 import pickle
 
@@ -24,6 +21,17 @@ U[:, np.sum(V,axis=1)<0] *= -1
 X = np.dot(U, np.diag(s))
 X = X[:, np.argsort(s)[::-1]][:,:50]
 pickle.dump(X, open('pca-scanpy.pickle', 'wb'))
+
+
+# CLUSTERING
+
+import scanpy.api as sc
+sc.settings.verbosity = 2
+adata = sc.read_10x_h5('1M_neurons_filtered_gene_bc_matrices_h5.h5') 
+sc.pp.recipe_zheng17(adata) 
+sc.pp.neighbors(adata) 
+sc.tl.louvain(adata)        
+adata.obs['louvain'].to_csv('clustering-scanpy.csv')
 
 
 # DOWNSAMPLE AND RUN t-SNE
