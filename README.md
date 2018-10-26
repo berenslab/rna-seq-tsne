@@ -1,6 +1,6 @@
 # The art of using t-SNE for single-cell transcriptomics
 
-This is a companion repository for our preprint https://www.biorxiv.org/content/early/2018/10/25/453449 (Kobak & Berens 2018, The art of using t-SNE for single-cell transcriptomics). All code is in Python Jupyter notebooks.
+This is a companion repository to our preprint https://www.biorxiv.org/content/early/2018/10/25/453449 (Kobak & Berens 2018, The art of using t-SNE for single-cell transcriptomics). All code is in Python Jupyter notebooks. We use this t-SNE implementation: https://github.com/KlugerLab/FIt-SNE.
 
 See https://github.com/berenslab/rna-seq-tsne/blob/master/demo.ipynb for a step-by-step guide that we are using in the paper. It uses the Allen institute data (25000 cells sequenced with Smart-seq2) from http://celltypes.brain-map.org/rnaseq/mouse.
 
