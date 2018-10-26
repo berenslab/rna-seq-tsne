@@ -12,4 +12,4 @@ The other notebooks generate all figures that we have in the paper:
 
    To run the last notebook one first needs to run `million-cells-server.py`. One needs more than 32 Gb or RAM to process the 1.3 mln dataset from 10X, so this Python script was run separately on a powerful machine. It pickles all the results and then the `million-cells.ipynb` notebook uses that to make the figures.
    
-For any technical questions, please contact me at dmitry.kobak@uni-tuebingen.de.
+For any technical questions, please start an Issue.
