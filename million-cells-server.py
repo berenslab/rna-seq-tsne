@@ -1,3 +1,6 @@
+# This script uses 10X data that can be downloaded from 
+# https://support.10xgenomics.com/single-cell-gene-expression/datasets/1.3.0/1M_neurons
+
 import numpy as np
 import pickle
 
@@ -23,15 +26,17 @@ X = X[:, np.argsort(s)[::-1]][:,:50]
 pickle.dump(X, open('pca-scanpy.pickle', 'wb'))
 
 
-# CLUSTERING
+# CLUSTERING 
+# (Note: we are NOT doing clustering but using results from Wolf et al. 2018)
+# This snippet can be run but we are NOT using the results for our paper
 
-import scanpy.api as sc
-sc.settings.verbosity = 2
-adata = sc.read_10x_h5('1M_neurons_filtered_gene_bc_matrices_h5.h5') 
-sc.pp.recipe_zheng17(adata) 
-sc.pp.neighbors(adata) 
-sc.tl.louvain(adata)        
-adata.obs['louvain'].to_csv('clustering-scanpy.csv')
+# import scanpy.api as sc
+# sc.settings.verbosity = 2
+# adata = sc.read_10x_h5('1M_neurons_filtered_gene_bc_matrices_h5.h5') 
+# sc.pp.recipe_zheng17(adata) 
+# sc.pp.neighbors(adata) 
+# sc.tl.louvain(adata)        
+# adata.obs['louvain'].to_csv('clustering-scanpy.csv')
 
 
 # DOWNSAMPLE AND RUN t-SNE
