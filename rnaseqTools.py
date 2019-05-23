@@ -28,7 +28,7 @@ def sparseload(filename, sep=',', dtype=float, chunksize=1000, index_col=0, drop
 
 
 def geneSelection(data, threshold=0, atleast=10, 
-                  yoffset=.02, xoffset=5, decay=1, n=None, 
+                  yoffset=.02, xoffset=5, decay=1.5, n=None, 
                   plot=True, markers=None, genes=None, figsize=(6,3.5),
                   markeroffsets=None, labelsize=10, alpha=1):
     
@@ -46,7 +46,6 @@ def geneSelection(data, threshold=0, atleast=10,
         meanExpr[detected] = np.nanmean(np.where(data[:,detected]>threshold, np.log2(data[:,detected]), np.nan), axis=0)
 
     lowDetection = np.array(np.sum(data>threshold, axis=0)).squeeze() < atleast
-    #lowDetection = (1 - zeroRate) * data.shape[0] < atleast - .00001
     zeroRate[lowDetection] = np.nan
     meanExpr[lowDetection] = np.nan
             
@@ -88,12 +87,12 @@ def geneSelection(data, threshold=0, atleast=10,
             plt.text(.4, 0.2, '{} genes selected\ny = exp(-{:.1f}*(x-{:.2f}))+{:.2f}'.format(np.sum(selected),decay,xoffset, yoffset), 
                      color='k', fontsize=labelsize, transform=plt.gca().transAxes)
 
-        plt.plot(x, y, color=sns.color_palette()[2], linewidth=2)
+        plt.plot(x, y, color=sns.color_palette()[1], linewidth=2)
         xy = np.concatenate((np.concatenate((x[:,None],y[:,None]),axis=1), np.array([[plt.xlim()[1], 1]])))
-        t = plt.matplotlib.patches.Polygon(xy, color='r', alpha=.2)
+        t = plt.matplotlib.patches.Polygon(xy, color=sns.color_palette()[1], alpha=.4)
         plt.gca().add_patch(t)
         
-        plt.scatter(meanExpr, zeroRate, s=3, alpha=alpha, rasterized=True)
+        plt.scatter(meanExpr, zeroRate, s=1, alpha=alpha, rasterized=True)
         if threshold==0:
             plt.xlabel('Mean log2 nonzero expression')
             plt.ylabel('Frequency of zero expression')
@@ -114,73 +113,6 @@ def geneSelection(data, threshold=0, atleast=10,
     return selected
 
 
-def scatterPlot(Z, dataset, size=4, s=3, title=None, labels_dy=2, 
-                rasterized=True, alpha=.5, showlabels=True, showmeans=True,
-                hideclustermeans=None, hideticklabels=True,
-                hideclusterlabels=[], markers=None,
-                showclusterlabels=None, clusterlabeloffsets=None,
-                clusterlabelcolor='k', clusterlabelsplit=False):
-    if size is not None:
-        plt.figure(figsize=(size,size))
-
-    plt.scatter(Z[:,0], Z[:,1], s=s, color=dataset.clusterColors[dataset.clusters], 
-                alpha=alpha, rasterized=rasterized)
-
-    K = dataset.clusterNames.size
-    Zmeans = np.zeros((K, 2))
-    for c in range(K):
-        Zmeans[c,:] = np.median(Z[dataset.clusters==c, :2], axis=0)
-    if hideclustermeans is not None:
-        Zmeans[hideclustermeans,:] = np.nan
-
-    if showmeans:
-        if markers is None:
-            markers = np.array(['o'] * K)
-        else:
-            markers = np.array(markers)
-        for m in np.unique(markers):
-            nonans = ~np.isnan(Zmeans[:,0])
-            plt.scatter(Zmeans[nonans,0][markers[nonans]==m], Zmeans[nonans,1][markers[nonans]==m],
-                        color=dataset.clusterColors[nonans][markers[nonans]==m], marker=m,
-                        s=40, edgecolor='k', linewidth=.7);
-
-    if showlabels:
-        if showclusterlabels is not None:
-            if isinstance(showclusterlabels[0], str):
-                showclusterlabels = [np.where(dataset.clusterNames==c)[0][0] for c in showclusterlabels]
-            else:
-                showclusterlabels = list(showclusterlabels)
-            hideclusterlabels = np.array([c for c in range(K) if c not in showclusterlabels])
-        for c in range(K):
-            if ~np.isnan(Zmeans[c,0]) and c not in hideclusterlabels:
-                if clusterlabeloffsets is not None and showclusterlabels is not None:
-                    dx,dy = clusterlabeloffsets[showclusterlabels.index(c)]
-                else:
-                    dx,dy = 0,labels_dy
-
-                if clusterlabelcolor is not None:
-                    col = clusterlabelcolor
-                else:
-                    col = dataset.clusterColors[c]
-
-                if clusterlabelsplit:
-                    label = '\n'.join(dataset.clusterNames[c].split(' '))
-                    hor = 'left'
-                else:
-                    label = dataset.clusterNames[c]
-                    hor = 'center'
-
-                plt.text(Zmeans[c,0]+dx, Zmeans[c,1]+dy, label, color=col, 
-                         fontsize=7, horizontalalignment=hor) 
-    
-    if hideticklabels:
-        plt.gca().get_xaxis().set_ticklabels([])
-        plt.gca().get_yaxis().set_ticklabels([])
-    if title is not None:
-        plt.title(title)
-    if size is not None:
-        plt.tight_layout()
-
 
 # Computing the matrix of Euclidean distances
 def pdist2(A,B):
@@ -197,9 +129,11 @@ def corr2(A,B):
     return C
 
 def map_to_tsne(referenceCounts, referenceGenes, newCounts, newGenes, referenceAtlas, 
-                bootstrap = False, knn = 25, nrep = 100, seed = None, batchsize = 1000):
+                bootstrap = False, knn = 25, nrep = 100, seed = None, batchsize = 1000,
+				verbose = 1):
     gg = list(set(referenceGenes) & set(newGenes))
-    print('Using a common set of ' + str(len(gg)) + ' genes.')
+    if verbose > 0:
+        print('Using a common set of ' + str(len(gg)) + ' genes.')
     
     newGenes = [np.where(newGenes==g)[0][0] for g in gg]
     refGenes = [np.where(referenceGenes==g)[0][0] for g in gg]
@@ -215,17 +149,17 @@ def map_to_tsne(referenceCounts, referenceGenes, newCounts, newGenes, referenceA
     n = X.shape[0]
     assignmentPositions = np.zeros((n, referenceAtlas.shape[1]))
     batchCount = int(np.ceil(n/batchsize))
-    if batchCount > 1:
+    if (batchCount > 1) and (verbose > 0):
         print('Processing in batches', end='', flush=True) 
     for b in range(batchCount):
-        if batchCount > 1:
+        if (batchCount > 1) and (verbose > 0):
             print('.', end='', flush=True) 
         batch = np.arange(b*batchsize, np.minimum((b+1)*batchsize, n))
         C = corr2(X[batch,:], T)
+		ind = np.argpartition(C, -knn)[:, -knn:]
         for i in range(batch.size):
-            ind = np.argsort(C[i,:])[::-1][:knn]                 
-            assignmentPositions[batch[i],:] = np.median(referenceAtlas[ind,:], axis=0)
-    if batchCount > 1:
+            assignmentPositions[batch[i],:] = np.median(referenceAtlas[ind[i,:],:], axis=0)
+    if (batchCount > 1) and (verbose > 0):
         print(' done', flush=True) 
     
     # Note: currently bootstrapping does not support batchsize
@@ -233,15 +167,18 @@ def map_to_tsne(referenceCounts, referenceGenes, newCounts, newGenes, referenceA
         if seed is not None:
             np.random.seed(seed)
         assignmentPositions_boot = np.zeros((n, referenceAtlas.shape[1], nrep))
-        print('Bootstrapping', end='', flush=True)
+        if verbose>0:
+            print('Bootstrapping', end='', flush=True)
         for rep in range(nrep):
-            print('.', end='')
+            if verbose>0:
+                print('.', end='')
             bootgenes = np.random.choice(T.shape[1], T.shape[1], replace=True)
             C_boot = corr2(X[:,bootgenes],T[:,bootgenes])
+			ind = np.argpartition(C, -knn)[:, -knn:]
             for i in range(X.shape[0]):
-                ind = np.argsort(C_boot[i,:])[::-1][:knn]                 
-                assignmentPositions_boot[i,:,rep] = np.median(referenceAtlas[ind,:], axis=0)
-        print(' done')      
+                assignmentPositions_boot[i,:,rep] = np.median(referenceAtlas[ind[i,:],:], axis=0)
+        if verbose>0:
+            print(' done')      
         return (assignmentPositions, assignmentPositions_boot)
     else:
         return assignmentPositions
@@ -298,14 +235,14 @@ def map_to_clusters(referenceCounts, referenceGenes,
                 clusterAssignment_matrix[cell, m] = mapsto_counts[i] / nrep
     
         if verbose:
-            for row in clusterAssignment_matrix:
+            for rownum,row in enumerate(clusterAssignment_matrix):
                 ind = np.argsort(row)[::-1]
                 ind = ind[:np.where(np.cumsum(row[ind]) >= until)[0][0] + 1]
                 mystring = []
                 for i in ind:
                     s = referenceClusterNames[i] + ' ({:.1f}%)'.format(100*row[i])
                     mystring.append(s)
-                mystring = cellNames[i] + ': ' + ', '.join(mystring)
+                mystring = cellNames[rownum] + ': ' + ', '.join(mystring)
                 print(mystring)
             
         if returnCmeans:
