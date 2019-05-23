@@ -2,7 +2,7 @@
 
 ![Pretty perplexity](pretty-perplexity.png)
 
-This is a companion repository to our preprint hhttps://www.biorxiv.org/content/10.1101/453449v2 (Kobak & Berens 2018, The art of using t-SNE for single-cell transcriptomics). All code is in Python Jupyter notebooks. We use this t-SNE implementation: https://github.com/KlugerLab/FIt-SNE.
+This is a companion repository to our preprint https://www.biorxiv.org/content/10.1101/453449v2 (Kobak & Berens 2018, The art of using t-SNE for single-cell transcriptomics). All code is in Python Jupyter notebooks. We use this t-SNE implementation: https://github.com/KlugerLab/FIt-SNE.
 
 See [`demo.ipynb`](https://github.com/berenslab/rna-seq-tsne/blob/master/demo.ipynb) for a step-by-step guide using a data set from Tasic et al., Nature 2018 (24,000 cells sequenced with Smart-seq2).
 
