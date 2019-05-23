@@ -2,22 +2,19 @@
 
 ![Pretty perplexity](pretty-perplexity.png)
 
-This is a companion repository to our preprint https://www.biorxiv.org/content/early/2018/10/25/453449 (Kobak & Berens 2018, The art of using t-SNE for single-cell transcriptomics). All code is in Python Jupyter notebooks. We use this t-SNE implementation: https://github.com/KlugerLab/FIt-SNE.
+This is a companion repository to our preprint hhttps://www.biorxiv.org/content/10.1101/453449v2 (Kobak & Berens 2018, The art of using t-SNE for single-cell transcriptomics). All code is in Python Jupyter notebooks. We use this t-SNE implementation: https://github.com/KlugerLab/FIt-SNE.
 
-See https://github.com/berenslab/rna-seq-tsne/blob/master/demo.ipynb for a step-by-step guide that we are using in the paper. It uses the Allen institute data (25000 cells sequenced with Smart-seq2) from http://celltypes.brain-map.org/rnaseq/mouse.
+See [`demo.ipynb`](https://github.com/berenslab/rna-seq-tsne/blob/master/demo.ipynb) for a step-by-step guide using a data set from Tasic et al., Nature 2018 (24,000 cells sequenced with Smart-seq2).
 
 The other notebooks generate all figures that we have in the paper:
 
-1. https://github.com/berenslab/rna-seq-tsne/blob/master/tasic-et-al.ipynb
+* [`toy-example.ipynb`](https://github.com/berenslab/rna-seq-tsne/blob/master/toy-example.ipynb)
+* [`tasic-et-al.ipynb`](https://github.com/berenslab/rna-seq-tsne/blob/master/tasic-et-al.ipynb)
+* [`umi-datasets.ipynb`](https://github.com/berenslab/rna-seq-tsne/blob/master/umi-datasets.ipynb)
+* [`million-cells.ipynb`](https://github.com/berenslab/rna-seq-tsne/blob/master/million-cells.ipynb)
+* [`two-million-cells.ipynb`](https://github.com/berenslab/rna-seq-tsne/blob/master/two-million-cells.ipynb)
+* [`umap-comparison.ipynb`](https://github.com/berenslab/rna-seq-tsne/blob/master/umap-comparison.ipynb)
 
-   Includes the analysis of the Allen dataset mentioned above, plus Tasic et al. 2016 and Cadwell et al. 2016.
-
-2. https://github.com/berenslab/rna-seq-tsne/blob/master/umi-datasets.ipynb
-
-   Includes the analysis of Macosko et al. 2015, Shekhar et al. 2016, and Harris et al. 2018.
-   
-3. https://github.com/berenslab/rna-seq-tsne/blob/master/million-cells.ipynb
-
-   N = 1.3 mln dataset from 10x Genomics. To run this notebook one first needs to run `million-cells-server.py`. One needs more than 32 Gb of RAM to process the this dataset, so this Python script was run separately on a powerful machine. It pickles all the results and then the `million-cells.ipynb` notebook uses that to make the figures.
+The last three notebooks require one to run `server-10xdata.py` and `server-cao.py`. One needs more than 32 Gb of RAM to process these datasets conveniently, so these Python scripts were run separately on a powerful machine. They pickle all the results (t-SNE embeddings). Unfortunately, these pickles are too large to be shared on github. We might share them later elsewhere.
    
 For any technical questions, please start an Issue.
