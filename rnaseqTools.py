@@ -156,7 +156,7 @@ def map_to_tsne(referenceCounts, referenceGenes, newCounts, newGenes, referenceA
             print('.', end='', flush=True) 
         batch = np.arange(b*batchsize, np.minimum((b+1)*batchsize, n))
         C = corr2(X[batch,:], T)
-		ind = np.argpartition(C, -knn)[:, -knn:]
+        ind = np.argpartition(C, -knn)[:, -knn:]
         for i in range(batch.size):
             assignmentPositions[batch[i],:] = np.median(referenceAtlas[ind[i,:],:], axis=0)
     if (batchCount > 1) and (verbose > 0):
@@ -174,7 +174,7 @@ def map_to_tsne(referenceCounts, referenceGenes, newCounts, newGenes, referenceA
                 print('.', end='')
             bootgenes = np.random.choice(T.shape[1], T.shape[1], replace=True)
             C_boot = corr2(X[:,bootgenes],T[:,bootgenes])
-			ind = np.argpartition(C, -knn)[:, -knn:]
+            ind = np.argpartition(C, -knn)[:, -knn:]
             for i in range(X.shape[0]):
                 assignmentPositions_boot[i,:,rep] = np.median(referenceAtlas[ind[i,:],:], axis=0)
         if verbose>0:
