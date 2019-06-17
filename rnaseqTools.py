@@ -174,7 +174,7 @@ def map_to_tsne(referenceCounts, referenceGenes, newCounts, newGenes, referenceA
                 print('.', end='')
             bootgenes = np.random.choice(T.shape[1], T.shape[1], replace=True)
             C_boot = corr2(X[:,bootgenes],T[:,bootgenes])
-            ind = np.argpartition(C, -knn)[:, -knn:]
+            ind = np.argpartition(C_boot, -knn)[:, -knn:]
             for i in range(X.shape[0]):
                 assignmentPositions_boot[i,:,rep] = np.median(referenceAtlas[ind[i,:],:], axis=0)
         if verbose>0:
