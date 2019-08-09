@@ -43,7 +43,10 @@ def geneSelection(data, threshold=0, atleast=10,
         zeroRate = 1 - np.mean(data>threshold, axis=0)
         meanExpr = np.zeros_like(zeroRate) * np.nan
         detected = zeroRate < 1
-        meanExpr[detected] = np.nanmean(np.where(data[:,detected]>threshold, np.log2(data[:,detected]), np.nan), axis=0)
+        mask = data[:,detected]>threshold
+        logs = np.zeros_like(data[:,detected]) * np.nan
+        logs[mask] = np.log2(data[:,detected][mask])
+        meanExpr[detected] = np.nanmean(logs, axis=0)
 
     lowDetection = np.array(np.sum(data>threshold, axis=0)).squeeze() < atleast
     zeroRate[lowDetection] = np.nan
@@ -129,7 +132,7 @@ def corr2(A,B):
     return C
 
 def map_to_tsne(referenceCounts, referenceGenes, newCounts, newGenes, referenceAtlas, 
-                bootstrap = False, knn = 25, nrep = 100, seed = None, batchsize = 1000,
+                bootstrap = False, knn = 10, nrep = 100, seed = None, batchsize = 1000,
 				verbose = 1):
     gg = list(set(referenceGenes) & set(newGenes))
     if verbose > 0:
