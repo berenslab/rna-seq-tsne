@@ -134,7 +134,7 @@ def corr2(A,B):
 def map_to_tsne(referenceCounts, referenceGenes, newCounts, newGenes, referenceAtlas, 
                 bootstrap = False, knn = 10, nrep = 100, seed = None, batchsize = 1000,
 				verbose = 1):
-    gg = list(set(referenceGenes) & set(newGenes))
+    gg = sorted(list(set(referenceGenes) & set(newGenes)))
     if verbose > 0:
         print('Using a common set of ' + str(len(gg)) + ' genes.')
     
@@ -193,7 +193,7 @@ def map_to_clusters(referenceCounts, referenceGenes,
                     bootstrap = False, nrep = 100, seed = None, verbose = False, until=.95,
 					returnCmeans = False):
 
-    gg = list(set(referenceGenes) & set(newGenes))
+    gg = sorted(list(set(referenceGenes) & set(newGenes)))
     print('Using a common set of ' + str(len(gg)) + ' genes.')
     
     newGenes = [np.where(newGenes==g)[0][0] for g in gg]
