@@ -122,13 +122,18 @@ def pdist2(A,B):
     D = np.sum(A**2,axis=1,keepdims=True) + np.sum(B**2, axis=1, keepdims=True).T - 2*A@B.T
     return D
 
+import warnings
+
 # Computing the matrix of correlations
 def corr2(A,B):
     A = A - A.mean(axis=1, keepdims=True)
     B = B - B.mean(axis=1, keepdims=True)
     ssA = (A**2).sum(axis=1, keepdims=True)
     ssB = (B**2).sum(axis=1, keepdims=True)
-    C = np.dot(A, B.T) / np.sqrt(np.dot(ssA,ssB.T))
+    # this ignores the NaN warnings. The result can have nans!
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        C = np.dot(A, B.T) / np.sqrt(np.dot(ssA,ssB.T))
     return C
 
 def map_to_tsne(referenceCounts, referenceGenes, newCounts, newGenes, referenceAtlas, 
@@ -191,7 +196,7 @@ def map_to_clusters(referenceCounts, referenceGenes,
                     newCounts, newGenes, 
                     referenceClusters, referenceClusterNames=[], cellNames=[],
                     bootstrap = False, nrep = 100, seed = None, verbose = False, until=.95,
-					returnCmeans = False):
+                    returnCmeans = False, totalClusters = None):
 
     gg = sorted(list(set(referenceGenes) & set(newGenes)))
     print('Using a common set of ' + str(len(gg)) + ' genes.')
@@ -207,10 +212,14 @@ def map_to_clusters(referenceCounts, referenceGenes,
         T = np.array(T.todense())
     T = np.log2(T + 1)
     
-    K = np.max(referenceClusters) + 1
+    if totalClusters is not None:
+        K = totalClusters
+    else:
+        K = np.max(referenceClusters) + 1
     means = np.zeros((K, T.shape[1]))
     for c in range(K):
-        means[c,:] = np.mean(T[referenceClusters==c,:], axis=0)
+        if np.sum(referenceClusters==c) > 0:
+            means[c,:] = np.mean(T[referenceClusters==c,:], axis=0)
 
     Cmeans = corr2(X, means)
     allnans = np.sum(np.isnan(Cmeans), axis=1) == Cmeans.shape[1]
