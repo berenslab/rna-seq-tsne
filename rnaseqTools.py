@@ -6,18 +6,17 @@ from scipy import sparse
 
 
 def sparseload(filename, sep=',', dtype=float, chunksize=1000, index_col=0, droplastcolumns=0):
-    with open(filename) as file:
-        genes = []
-        sparseblocks = []
-        for i,chunk in enumerate(pd.read_csv(filename, chunksize=chunksize, sep=sep, index_col=index_col)):
-            print('.', end='', flush=True)
-            if i==0:
-                cells = np.array(chunk.columns)
-            genes.extend(list(chunk.index))
-            sparseblock = sparse.csr_matrix(chunk.values.astype(dtype))
-            sparseblocks.append([sparseblock])
-        counts = sparse.bmat(sparseblocks)
-        print(' done')
+    genes = []
+    sparseblocks = []
+    for i,chunk in enumerate(pd.read_csv(filename, chunksize=chunksize, sep=sep, index_col=index_col)):
+        print('.', end='', flush=True)
+        if i==0:
+            cells = np.array(chunk.columns)
+        genes.extend(list(chunk.index))
+        sparseblock = sparse.csr_matrix(chunk.values.astype(dtype))
+        sparseblocks.append([sparseblock])
+    counts = sparse.bmat(sparseblocks)
+    print(' done')
 
     if droplastcolumns > 0:
         end = cells.size - droplastcolumns
