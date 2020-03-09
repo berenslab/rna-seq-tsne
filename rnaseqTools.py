@@ -6,17 +6,18 @@ from scipy import sparse
 
 
 def sparseload(filename, sep=',', dtype=float, chunksize=1000, index_col=0, droplastcolumns=0):
-    genes = []
-    sparseblocks = []
-    for i,chunk in enumerate(pd.read_csv(filename, chunksize=chunksize, sep=sep, index_col=index_col)):
-        print('.', end='', flush=True)
-        if i==0:
-            cells = np.array(chunk.columns)
-        genes.extend(list(chunk.index))
-        sparseblock = sparse.csr_matrix(chunk.values.astype(dtype))
-        sparseblocks.append([sparseblock])
-    counts = sparse.bmat(sparseblocks)
-    print(' done')
+    with open(filename) as file:
+        genes = []
+        sparseblocks = []
+        for i,chunk in enumerate(pd.read_csv(filename, chunksize=chunksize, sep=sep, index_col=index_col)):
+            print('.', end='', flush=True)
+            if i==0:
+                cells = np.array(chunk.columns)
+            genes.extend(list(chunk.index))
+            sparseblock = sparse.csr_matrix(chunk.values.astype(dtype))
+            sparseblocks.append([sparseblock])
+        counts = sparse.bmat(sparseblocks)
+        print(' done')
 
     if droplastcolumns > 0:
         end = cells.size - droplastcolumns
@@ -29,7 +30,7 @@ def sparseload(filename, sep=',', dtype=float, chunksize=1000, index_col=0, drop
 def geneSelection(data, threshold=0, atleast=10, 
                   yoffset=.02, xoffset=5, decay=1.5, n=None, 
                   plot=True, markers=None, genes=None, figsize=(6,3.5),
-                  markeroffsets=None, labelsize=10, alpha=1):
+                  markeroffsets=None, labelsize=10, alpha=1, verbose=1):
     
     if sparse.issparse(data):
         zeroRate = 1 - np.squeeze(np.array((data>threshold).mean(axis=0)))
@@ -66,7 +67,8 @@ def geneSelection(data, threshold=0, atleast=10,
             else:
                 low = xoffset
                 xoffset = (xoffset + up)/2
-        print('Chosen offset: {:.2f}'.format(xoffset))
+        if verbose>0:
+            print('Chosen offset: {:.2f}'.format(xoffset))
     else:
         nonan = ~np.isnan(zeroRate)
         selected = np.zeros_like(zeroRate).astype(bool)
