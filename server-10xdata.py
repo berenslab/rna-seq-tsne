@@ -26,7 +26,7 @@ pickle.dump(X, open('big-pickles/10x-pca.pickle', 'wb'))
 
 # load cluster labels
 # https://github.com/theislab/scanpy_usage/blob/master/170522_visualizing_one_million_cells/results/louvain.csv.gz
-clusters = pd.read_csv('big-data/10x/louvain.csv', header=None).values[:,1].astype(int)
+clusters = pd.read_csv('data/10x-1mln-scanpy-louvain.csv.gz', header=None).values[:,1].astype(int)
 
 
 # DOWNSAMPLE AND RUN t-SNE
