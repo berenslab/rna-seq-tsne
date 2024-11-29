@@ -6,6 +6,8 @@ This is a companion repository to our paper https://www.nature.com/articles/s414
 
 See [`demo.ipynb`](https://github.com/berenslab/rna-seq-tsne/blob/master/demo.ipynb) for a step-by-step guide using a data set from Tasic et al., Nature 2018 (24,000 cells sequenced with Smart-seq2).
 
+The preprocessed data from Tasic et al. (after library size normalization, log-transformation, highly variable gene selection and reduction to 50 dimensions with PCA) are available in `data/tasic-preprocessed` as the 50-dimensional data matrix and an array of point colors.
+
 The other notebooks generate all figures that we have in the paper:
 
 * [`toy-example.ipynb`](https://github.com/berenslab/rna-seq-tsne/blob/master/toy-example.ipynb)
